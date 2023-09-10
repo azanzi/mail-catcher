@@ -34,6 +34,6 @@ func (c *Conn) readLine() (string, error) {
 }
 
 // writeResponse writes a line to the connection
-func (c *Conn) writeResponse(code int, text string) error {
+func (c *Conn) writeLine(code int, text string) error {
 	return c.text.PrintfLine("%d %v", code, text)
 }
