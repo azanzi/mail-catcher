@@ -6,11 +6,14 @@ import (
 	"strings"
 )
 
+// application represents the state of the app.
+// It contains information related to the server and data.
 type application struct {
 	inbox []Email
 	addr  string
 }
 
+// listen listens for incoming TCP connections and handles them asynchronously.
 func (app *application) listen() error {
 	l, err := net.Listen("tcp", app.addr)
 	if err != nil {
@@ -67,7 +70,11 @@ func (app *application) handleConnection(c *Conn) {
 
 	// Read headers
 	for cmd != "" {
-		// TODO: parse header
+		if isHeader(cmd) {
+			email.parseHeader(cmd)
+		} else {
+			email.addHeader(cmd)
+		}
 		cmd, _ = c.readLine()
 	}
 
@@ -87,8 +94,18 @@ func (app *application) handleConnection(c *Conn) {
 
 	// Add newly received email to inbox
 	app.inbox = append(app.inbox, email)
+
+	fmt.Println("Mail successfully received")
 }
 
 func main() {
+	app := &application{
+		addr: "localhost:1025",
+	}
 
+	fmt.Println("Starting SMTP server on", app.addr)
+	err := app.listen()
+	if err != nil {
+		panic(err)
+	}
 }
