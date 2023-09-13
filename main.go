@@ -11,7 +11,7 @@ import (
 // application represents the state of the app.
 // It contains information related to the server and data.
 type application struct {
-	inbox []Email
+	inbox []*Email
 	addr  string
 	// templates is the cache containing all html templates preloaded in memory
 	templates map[string]*template.Template
@@ -40,7 +40,7 @@ func (app *application) listen() error {
 // It implements a minimal version of the SMTP protocol.
 func (app *application) handleConnection(c *Conn) {
 	defer c.Close()
-	var email Email
+	email := NewEmail()
 
 	// Welcome message
 	c.writeLine(220, fmt.Sprintf("%s Mail Catcher", app.addr))

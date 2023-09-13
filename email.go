@@ -35,6 +35,15 @@ type Email struct {
 	To      Address
 	Body    string
 	Headers map[string]string
+	Seen    bool
+}
+
+// NewEmail initializes an Email struct, 'seen' defaults to false.
+func NewEmail() *Email {
+	return &Email{
+		Headers: make(map[string]string),
+		Seen:    false,
+	}
 }
 
 // parseHeader takes a header string and extracts 'Subject', 'From' and 'To' fields.
