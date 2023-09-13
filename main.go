@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"net"
+	"net/http"
 	"strings"
 )
 
@@ -102,6 +103,8 @@ func main() {
 	app := &application{
 		addr: "localhost:1025",
 	}
+
+	go http.ListenAndServe(":9999", app.routes())
 
 	fmt.Println("Starting SMTP server on", app.addr)
 	err := app.listen()
