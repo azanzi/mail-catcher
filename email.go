@@ -3,10 +3,15 @@ package main
 import (
 	"regexp"
 	"strings"
+	"time"
 )
 
-// headerRegex matches only 'Subject', 'From' and 'To' fields.
-var headerRegex = regexp.MustCompile("^(From|To|Subject|Date):\\s*(.*)$")
+var (
+	// headerRegex matches only 'Subject', 'From' and 'To' fields.
+	headerRegex = regexp.MustCompile("^(From|To|Subject):\\s*(.*)$")
+	// timeLayout layout string in the format hh:mm.
+	timeLayout = "15:04"
+)
 
 type Address string
 
@@ -30,12 +35,13 @@ type Email struct {
 		From string
 		To   []string
 	}
-	Subject string
-	From    Address
-	To      Address
-	Body    string
-	Headers map[string]string
-	Seen    bool
+	Subject    string
+	From       Address
+	To         Address
+	Body       string
+	Headers    map[string]string
+	Seen       bool
+	ReceivedAt time.Time
 }
 
 // NewEmail initializes an Email struct, 'seen' defaults to false.
@@ -68,4 +74,9 @@ func isHeader(s string) bool {
 func (e *Email) addHeader(s string) {
 	parts := strings.SplitN(s, ": ", 2)
 	e.Headers[parts[0]] = parts[1]
+}
+
+// Time returns the time the email has been received at in the format hh:mm.
+func (e *Email) Time() string {
+	return e.ReceivedAt.Format(timeLayout)
 }

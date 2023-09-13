@@ -33,9 +33,10 @@
                 {{if .Emails}}
                     {{range $idx, $el := .Emails}}
                         <div class="box {{if not $el.Seen}}has-background-success-light{{end}}">
+                            <span>{{$el.Time}}</span>
                             <div class="container is-flex is-justify-content-space-between">
                                 <a href="/{{$idx}}">
-                                    <h4 class="title is-6 mb-2">{{if not $el.Seen}}✉️ {{end}}{{$el.Subject}}</h4>
+                                    <h4 class="title is-6 mb-1">{{if not $el.Seen}}✉️ {{end}}{{$el.Subject}}</h4>
                                 </a>
                                 <button class="delete"></button>
                             </div>

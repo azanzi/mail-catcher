@@ -7,6 +7,7 @@ import (
 	"net"
 	"net/http"
 	"strings"
+	"time"
 )
 
 // config holds the cmd parameters
@@ -104,8 +105,11 @@ func (app *application) handleConnection(c *Conn) {
 	c.readLine()
 	c.writeLine(221, "Service closing transmission channel")
 
+	// Get received time
+	email.ReceivedAt = time.Now()
+
 	// Add newly received email to inbox
-	app.inbox = append(app.inbox, email)
+	app.inbox = append([]*Email{email}, app.inbox...)
 
 	fmt.Println("Mail successfully received")
 }

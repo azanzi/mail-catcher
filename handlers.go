@@ -25,6 +25,8 @@ func (app *application) emailPageHandler(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
+	app.inbox[id].Seen = true
+
 	data := struct {
 		Emails []*Email
 		Email  *Email
