@@ -11,9 +11,10 @@ import (
 // application represents the state of the app.
 // It contains information related to the server and data.
 type application struct {
+	addr string
+	// inbox stores all the emails received during runtime.
 	inbox []*Email
-	addr  string
-	// templates is the cache containing all html templates preloaded in memory
+	// templates is the cache containing all html templates preloaded in memory.
 	templates map[string]*template.Template
 }
 

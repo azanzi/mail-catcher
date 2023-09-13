@@ -1,9 +1,59 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>📨 Mailcatcher</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
 </head>
 <body>
+<nav class="navbar" role="navigation" aria-label="main navigation">
+    <div class="navbar-brand">
+        <a class="navbar-item" href="/">
+            <h1 class="title">📨 Mailcatcher</h1>
+        </a>
+
+        <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbar">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+        </a>
+    </div>
+    <div id="navbar" class="navbar-menu">
+        <div class="navbar-start">
+            <a class="navbar-item" href="/">Inbox</a>
+        </div>
+    </div>
+</nav>
+
+<section class="section">
+    <div class="box">
+        <h1 class="title is-4">Inbox 📬</h1>
+        <div class="columns" style="height: 75vh; width: 100%;">
+            <div class="column is-one-quarter" style="overflow-y: auto">
+                {{if .Emails}}
+                    {{range $idx, $el := .Emails}}
+                        <div class="box {{if not $el.Seen}}has-background-success-light{{end}}">
+                            <div class="container is-flex is-justify-content-space-between">
+                                <a href="/{{$idx}}">
+                                    <h4 class="title is-6 mb-2">{{if not $el.Seen}}✉️ {{end}}{{$el.Subject}}</h4>
+                                </a>
+                                <button class="delete"></button>
+                            </div>
+                            <a href="/{{$idx}}">
+                                <h5 class="subtitle is-6">{{$el.From.Email}} → {{$el.To.Email}}</h5>
+                            </a>
+                        </div>
+                    {{end}}
+                {{else}}
+                    <div class="container">
+                        <h4 class="subtitle is-6 has-text-centered">No email in inbox yet</h4>
+                    </div>
+                {{end}}
+            </div>
+        </div>
+    </div>
+</section>
+
 {{range $idx, $el := .Emails}}
     <span>Seen: {{$el.Seen}}</span>
     <span>Subject: {{$el.Subject}}</span>
