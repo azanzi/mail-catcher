@@ -50,16 +50,22 @@
                     </div>
                 {{end}}
             </div>
+
+            <div class="column is-flex" style="overflow-y: auto;">
+                <div class="box flex-grow-1" style="width: 100%;">
+                    <h6 class="title is-4">{{.Email.Subject}}</h6>
+                    <h5 class="subtitle is-6">{{.Email.From.Email}} → {{.Email.To.Email}}</h5>
+                    <hr/>
+                    <h6 class="subtitle is-6 m-2">FROM: {{.Email.From}}</h6>
+                    <h6 class="subtitle is-6 m-2">TO: {{.Email.To}}</h6>
+                    {{range $key, $val := .Email.Headers}}
+                        <h6 class="subtitle is-6 m-2">{{$key}}: {{$val}}</h6>
+                    {{end}}
+                    <pre>{{.Email.Body}}</pre>
+                </div>
+            </div>
         </div>
     </div>
 </section>
-
-{{range $idx, $el := .Emails}}
-    <span>Seen: {{$el.Seen}}</span>
-    <span>Subject: {{$el.Subject}}</span>
-    <span>From: {{$el.From}}</span>
-    <span>To: {{$el.To}}</span>
-    <span>Body: {{$el.Body}}</span>
-{{end}}
 </body>
 </html>
