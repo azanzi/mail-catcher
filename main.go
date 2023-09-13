@@ -12,8 +12,8 @@ import (
 
 // config holds the cmd parameters
 type config struct {
-	smtpPort int
-	webPort  int
+	smtpAddr string
+	webAddr  string
 }
 
 // application represents the state of the app.
@@ -28,7 +28,7 @@ type application struct {
 
 // listen listens for incoming TCP connections and handles them asynchronously.
 func (app *application) listen() error {
-	l, err := net.Listen("tcp", fmt.Sprintf(":%d", app.config.smtpPort))
+	l, err := net.Listen("tcp", app.config.smtpAddr)
 	if err != nil {
 		return err
 	}
@@ -117,21 +117,33 @@ func (app *application) handleConnection(c *Conn) {
 func main() {
 	var cfg config
 
-	flag.IntVar(&cfg.smtpPort, "smtp", 1025, "SMTP server port")
-	flag.IntVar(&cfg.webPort, "web", 9999, "Web interface port")
+	flag.StringVar(&cfg.smtpAddr, "smtp", ":1025", "SMTP server address")
+	flag.StringVar(&cfg.webAddr, "web", ":9999", "Web interface address")
 	flag.Parse()
+
+	templateCache, err := newTemplateCache()
+	if err != nil {
+		panic(err)
+	}
 
 	app := &application{
 		config:    cfg,
-		templates: make(map[string]*template.Template),
+		templates: templateCache,
 	}
-	app.loadTemplates()
 
-	go http.ListenAndServe(fmt.Sprintf(":%d", app.config.webPort), app.routes())
+	srv := &http.Server{
+		Addr:         app.config.webAddr,
+		Handler:      app.routes(),
+		IdleTimeout:  time.Minute,
+		ReadTimeout:  5 * time.Second,
+		WriteTimeout: 10 * time.Second,
+	}
 
-	fmt.Printf("SMTP: localhost:%d\n", app.config.smtpPort)
-	fmt.Printf("Web UI: http://localhost:%d\n", app.config.webPort)
-	err := app.listen()
+	go srv.ListenAndServe()
+
+	fmt.Printf("SMTP: %s\n", app.config.smtpAddr)
+	fmt.Printf("Web UI: %s\n", app.config.webAddr)
+	err = app.listen()
 	if err != nil {
 		panic(err)
 	}

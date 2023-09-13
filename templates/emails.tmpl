@@ -31,12 +31,13 @@
         <div class="columns" style="height: 75vh; width: 100%;">
             <div class="column is-one-quarter" style="overflow-y: auto">
                 {{if .Emails}}
+                    {{$id := .Id}}
                     {{range $idx, $el := .Emails}}
-                        <div class="box {{if not $el.Seen}}has-background-success-light{{end}}">
+                        <div class="box {{if eq $idx $id}}has-background-primary-light{{end}}">
                             <span>{{$el.Time}}</span>
                             <div class="container is-flex is-justify-content-space-between">
                                 <a href="/{{$idx}}">
-                                    <h4 class="title is-6 mb-1">{{if not $el.Seen}}✉️ {{end}}{{$el.Subject}}</h4>
+                                    <h4 class="title is-6 mb-1">{{if not $el.Seen}}🔴 {{end}}{{$el.Subject}}</h4>
                                 </a>
                                 <button class="delete"></button>
                             </div>
@@ -53,17 +54,19 @@
             </div>
 
             <div class="column is-flex" style="overflow-y: auto;">
-                <div class="box flex-grow-1" style="width: 100%;">
-                    <h6 class="title is-4">{{.Email.Subject}}</h6>
-                    <h5 class="subtitle is-6">{{.Email.From.Email}} → {{.Email.To.Email}}</h5>
-                    <hr/>
-                    <h6 class="subtitle is-6 m-2">FROM: {{.Email.From}}</h6>
-                    <h6 class="subtitle is-6 m-2">TO: {{.Email.To}}</h6>
-                    {{range $key, $val := .Email.Headers}}
-                        <h6 class="subtitle is-6 m-2">{{$key}}: {{$val}}</h6>
-                    {{end}}
-                    <pre>{{.Email.Body}}</pre>
-                </div>
+                {{if .Email}}
+                    <div class="box flex-grow-1" style="width: 100%;">
+                        <h6 class="title is-4">{{.Email.Subject}}</h6>
+                        <h5 class="subtitle is-6">{{.Email.From.Email}} → {{.Email.To.Email}}</h5>
+                        <hr/>
+                        <h6 class="subtitle is-6 m-2">FROM: {{.Email.From}}</h6>
+                        <h6 class="subtitle is-6 m-2">TO: {{.Email.To}}</h6>
+                        {{range $key, $val := .Email.Headers}}
+                            <h6 class="subtitle is-6 m-2">{{$key}}: {{$val}}</h6>
+                        {{end}}
+                        <pre>{{.Email.Body}}</pre>
+                    </div>
+                {{end}}
             </div>
         </div>
     </div>

@@ -10,10 +10,14 @@ import (
 func (app *application) landingPageHandler(w http.ResponseWriter, r *http.Request) {
 	data := struct {
 		Emails []*Email
+		Email  *Email
+		Id     int
 	}{
 		Emails: app.inbox,
+		Email:  nil,
+		Id:     -1,
 	}
-	app.templates["emails"].Execute(w, data)
+	app.render(w, "emails", data)
 }
 
 // emailPageHandler shows the email at position 'id'.
@@ -30,9 +34,11 @@ func (app *application) emailPageHandler(w http.ResponseWriter, r *http.Request)
 	data := struct {
 		Emails []*Email
 		Email  *Email
+		Id     int
 	}{
 		Emails: app.inbox,
 		Email:  app.inbox[id],
+		Id:     id,
 	}
-	app.templates["emails"].Execute(w, data)
+	app.render(w, "emails", data)
 }
