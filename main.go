@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"html/template"
 	"net"
 	"net/http"
 	"strings"
@@ -12,6 +13,8 @@ import (
 type application struct {
 	inbox []Email
 	addr  string
+	// templates is the cache containing all html templates preloaded in memory
+	templates map[string]*template.Template
 }
 
 // listen listens for incoming TCP connections and handles them asynchronously.
@@ -101,8 +104,10 @@ func (app *application) handleConnection(c *Conn) {
 
 func main() {
 	app := &application{
-		addr: "localhost:1025",
+		addr:      "localhost:1025",
+		templates: make(map[string]*template.Template),
 	}
+	app.loadTemplates()
 
 	go http.ListenAndServe(":9999", app.routes())
 

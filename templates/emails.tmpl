@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>📨 Mailcatcher</title>
+</head>
+<body>
+{{range $idx, $el := .Emails}}
+    <span>Seen: {{$el.Seen}}</span>
+    <span>Subject: {{$el.Subject}}</span>
+    <span>From: {{$el.From}}</span>
+    <span>To: {{$el.To}}</span>
+    <span>Body: {{$el.Body}}</span>
+{{end}}
+</body>
+</html>
