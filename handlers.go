@@ -21,7 +21,8 @@ func (app *application) emailPageHandler(w http.ResponseWriter, r *http.Request)
 	params := httprouter.ParamsFromContext(r.Context())
 	id, err := strconv.Atoi(params.ByName("id"))
 	if err != nil || id < 0 || id >= len(app.inbox) {
-		// TODO: out of range, handle error
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
 	}
 
 	data := struct {

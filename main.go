@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"html/template"
 	"net"
@@ -8,10 +9,16 @@ import (
 	"strings"
 )
 
+// config holds the cmd parameters
+type config struct {
+	smtpPort int
+	webPort  int
+}
+
 // application represents the state of the app.
 // It contains information related to the server and data.
 type application struct {
-	addr string
+	config config
 	// inbox stores all the emails received during runtime.
 	inbox []*Email
 	// templates is the cache containing all html templates preloaded in memory.
@@ -20,7 +27,7 @@ type application struct {
 
 // listen listens for incoming TCP connections and handles them asynchronously.
 func (app *application) listen() error {
-	l, err := net.Listen("tcp", app.addr)
+	l, err := net.Listen("tcp", fmt.Sprintf(":%d", app.config.smtpPort))
 	if err != nil {
 		return err
 	}
@@ -44,7 +51,7 @@ func (app *application) handleConnection(c *Conn) {
 	email := NewEmail()
 
 	// Welcome message
-	c.writeLine(220, fmt.Sprintf("%s Mail Catcher", app.addr))
+	c.writeLine(220, "Mail Catcher")
 
 	// EHLO/HELO
 	cmd, _ := c.readLine()
@@ -104,15 +111,22 @@ func (app *application) handleConnection(c *Conn) {
 }
 
 func main() {
+	var cfg config
+
+	flag.IntVar(&cfg.smtpPort, "smtp", 1025, "SMTP server port")
+	flag.IntVar(&cfg.webPort, "web", 9999, "Web interface port")
+	flag.Parse()
+
 	app := &application{
-		addr:      "localhost:1025",
+		config:    cfg,
 		templates: make(map[string]*template.Template),
 	}
 	app.loadTemplates()
 
-	go http.ListenAndServe(":9999", app.routes())
+	go http.ListenAndServe(fmt.Sprintf(":%d", app.config.webPort), app.routes())
 
-	fmt.Println("Starting SMTP server on", app.addr)
+	fmt.Printf("SMTP: localhost:%d\n", app.config.smtpPort)
+	fmt.Printf("Web UI: http://localhost:%d\n", app.config.webPort)
 	err := app.listen()
 	if err != nil {
 		panic(err)
